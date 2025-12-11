@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+struct triangle
+{
+	int a;
+	int b;
+	int c;
+};
+
+typedef struct triangle triangle;
+// Function to calculate the area of a triangle using Heron's formula
+double calculate_area(triangle t) {
+    double s = (t.a + t.b + t.c) / 2.0; // Semi-perimeter
+    return sqrt(s * (s - t.a) * (s - t.b) * (s - t.c)); // Heron's formula
+}
+
+// Comparator function for sorting triangles based on their area
+void sort_by_area(triangle* tr, int n) {
+    double* areas = malloc(n * sizeof(double)); // Array to store the areas
+    for (int i = 0; i < n; i++) {
+        areas[i] = calculate_area(tr[i]); // Precompute areas
+    }
+    
+    // Sort using a simple bubble sort based on precomputed areas
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (areas[j] > areas[j + 1]) {
+                // Swap triangles
+                triangle temp = tr[j];
+                tr[j] = tr[j + 1];
+                tr[j + 1] = temp;
+
+                // Swap areas to keep consistency
+                double temp_area = areas[j];
+                areas[j] = areas[j + 1];
+                areas[j + 1] = temp_area;
+            }
+        }
+    }
+    free(areas); // Free the allocated memory for areas
+}
+int main()
+{
+	int n;
+	scanf("%d", &n);
+	triangle *tr = malloc(n * sizeof(triangle));
+	for (int i = 0; i < n; i++) {
+		scanf("%d%d%d", &tr[i].a, &tr[i].b, &tr[i].c);
+	}
+	sort_by_area(tr, n);
+	for (int i = 0; i < n; i++) {
+		printf("%d %d %d\n", tr[i].a, tr[i].b, tr[i].c);
+	}
+	return 0;
+}
